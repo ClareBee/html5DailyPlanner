@@ -1,16 +1,20 @@
 $(document).ready(function(){
+  //add task event
   $('#add-task-form').on('submit', function(e){
-    addTask();
+    addTask(e);
   });
-
+  // edit event
+  $('#edit-task-form').on('submit', function(e){
+    updateTask(e)
+  });
   displayTasks();
 
 //function to display Tasks from local storage
   function displayTasks(){
     var taskList = JSON.parse(localStorage.getItem('tasks'));
-    if(taskList != null){
-      taskList= taskList.sort(sortByTime);
-    }
+      if(taskList != null){
+        taskList= taskList.sort(sortByTime);
+        }
     //set counter for loop
     var i = 0;
     //check tasks
@@ -59,4 +63,57 @@ $(document).ready(function(){
       localStorage.setItem('tasks', JSON.stringify(tasks));
     };
   };
+
+  function updateTask(){
+    var id = $('#task_id').val();
+    var task = $('#task').val();
+    var task_priority = $('#priority').val();
+    var task_date = $('#date').val();
+    var task_time = $('#time').val();
+
+    if(task_priority == ""){
+      task_priority = "normal";
+    } else {
+      var taskList = JSON.parse(localStorage.getItem('tasks'));
+        if(tasks == null){
+          tasks = [];
+        }
+      for(var i = 0; i < taskList.length; i++){
+        if(taskList[i].id == id){
+          taskList.splice(i, 1);
+          }
+        localStorage.setItem('tasks', JSON.stringify(taskList));
+        }
+    }
+  };
 });
+
+//function for getting a single task (separate from whether or not doc is ready)
+function getTask(){
+  var $_GET = getQueryParams(document.location.search);
+  id = $_GET['id'];
+  var taskList = JSON.parse(localStorage.getItem('tasks'));
+  for(var i = 0; i < taskList.length; i++){
+    if(taskList[i].id == id){
+      $('#edit-task-form #task_id').val(taskList[i].id);
+      $('#edit-task-form #task').val(taskList[i].task);
+      $('#edit-task-form #priority').val(taskList[i].task_priority);
+      $('#edit-task-form #date').val(taskList[i].task_date);
+      $('#edit-task-form #time').val(taskList[i].task_time);
+    }
+  }
+}
+
+//function to get HTTP GET Request info
+function getQueryParams(qs){
+  qs = qs.split("+").join(" ");
+  var params = {},
+      tokens,
+      re = /[?&]?([^=]+)=([^&]*)/g;
+
+      while(tokens = re.exec(qs)){
+        params[decodeURIComponent(tokens[1])]
+        = decodeURIComponent(tokens[2]);
+      }
+      return params;
+}
