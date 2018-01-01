@@ -9,6 +9,12 @@ $(document).ready(function(){
   });
   displayTasks();
 
+//remove task event
+  $('#task-table').on('click', '#remove-task', function(){
+    id = $(this).data('id');
+    removeTask(id);
+  });
+
 //function to display Tasks from local storage
   function displayTasks(){
     var taskList = JSON.parse(localStorage.getItem('tasks'));
@@ -20,7 +26,7 @@ $(document).ready(function(){
     //check tasks
     if(localStorage.getItem('tasks') != null){
       $.each(taskList, function(key, value){
-        $('#task-table').append('<tr id="'+ value.id + '">' + '<td>' + value.task + '</td>' + '<td>' + value.task_priority + '</td>' + '<td>' + value.task_date + '</td>' + '<td>' + value.task_time + '</td>' + '<td><a href="edit.html?id=' + value.id +'">Edit</a> | <a href="#" id="remove-task">Remove</a></td>' + '</tr>')
+        $('#task-table').append('<tr id="'+ value.id + '">' + '<td>' + value.task + '</td>' + '<td>' + value.task_priority + '</td>' + '<td>' + value.task_date + '</td>' + '<td>' + value.task_time + '</td>' + '<td><a href="edit.html?id=' + value.id +'">Edit</a> | <a href="#" id="remove-task" data-id="' + value.id + '">Remove</a></td>' + '</tr>')
       });
     }
   }
@@ -86,6 +92,19 @@ $(document).ready(function(){
         }
     }
   };
+  function removeTask(id){
+    if(confirm("are you sure you want to delete this task?")){
+      var taskList = JSON.parse(localStorage.getItem('tasks'));
+      for(var i = 0; i < taskList.length; i++){
+        if(taskList[i].id == id){
+          taskList.splice(i, 1);
+          }
+        localStorage.setItem('tasks', JSON.stringify(taskList));
+        }
+      location.reload();
+    }
+
+  }
 });
 
 //function for getting a single task (separate from whether or not doc is ready)
